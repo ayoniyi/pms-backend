@@ -70,7 +70,7 @@ router.get('/:patientName', async (req, res) => {
 })
 
 //Update
-router.patch('/id/:patientId', upload.single('avatar'), async (req, res) => {
+router.patch('/id/:patientId', async (req, res) => {
   //console.log(req.params.postId);
   try {
     const updatedPatient = await Patient.updateMany(
@@ -79,7 +79,7 @@ router.patch('/id/:patientId', upload.single('avatar'), async (req, res) => {
         $set: {
           email: req.body.email,
           healthBio: req.body.healthBio,
-          avatar: req.file.path,
+          //avatar: req.file.path,
         },
       },
     )
@@ -90,6 +90,30 @@ router.patch('/id/:patientId', upload.single('avatar'), async (req, res) => {
     })
   }
 })
+
+// Update, but for photos
+router.patch(
+  '/id/:patientId/photo',
+  upload.single('avatar'),
+  async (req, res) => {
+    //console.log(req.params.postId);
+    try {
+      const updatedPhoto = await Patient.updateOne(
+        { _id: req.params.patientId },
+        {
+          $set: {
+            avatar: req.file.path,
+          },
+        },
+      )
+      res.json(updatedPhoto)
+    } catch (err) {
+      res.json({
+        message: err,
+      })
+    }
+  },
+)
 
 // Delete
 router.delete('/id/:patientId', async (req, res) => {
